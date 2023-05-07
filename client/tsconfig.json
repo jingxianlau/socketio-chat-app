@@ -16,10 +16,10 @@
     "noImplicitThis": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
-    "noUnusedLocals": true,
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
-    "removeComments": true
+    "removeComments": true,
+    "noUnusedLocals": false
   },
   "exclude": [
     "node_modules",

@@ -4,7 +4,7 @@ interface ChatsProps {}
 
 const Chats: React.FC<ChatsProps> = ({}) => {
   const fetchChats = async () => {
-    const response = await fetch('/api/chat');
+    const response = await fetch('http://localhost:4000/api/chat');
 
     console.log(response.json());
   };
