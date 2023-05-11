@@ -10,12 +10,13 @@ import {
   InputProps,
   InputRightElement
 } from '@chakra-ui/react';
-import { FormValues } from './SignUp';
+import { FormValues as SignupFormValues } from './SignUp';
+import { FormValues as LoginFormValues } from './Login';
 
 interface FormFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
   name: string;
-  formik: FormikProps<FormValues>;
+  formik: FormikProps<SignupFormValues> | FormikProps<LoginFormValues>;
 }
 
 const FormField: React.FC<FormFieldProps> = ({
@@ -83,7 +84,7 @@ const FormField: React.FC<FormFieldProps> = ({
     default:
       return (
         <Field name={name}>
-          {({ field, form }: FieldProps) => (
+          {({ field }: FieldProps) => (
             <FormControl
               mb='5'
               isInvalid={(errors as any)[name] && (touched as any)[name]}

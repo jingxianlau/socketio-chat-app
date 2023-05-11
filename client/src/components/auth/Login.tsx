@@ -4,7 +4,7 @@ import { Form, Formik, FormikHelpers } from 'formik';
 import { Button } from '@chakra-ui/react';
 import * as Yup from 'yup';
 
-interface FormValues {
+export interface FormValues {
   email: string;
   password: string;
 }
@@ -18,16 +18,15 @@ const Login: React.FC = () => {
     values: FormValues,
     formikHelpers: FormikHelpers<FormValues>
   ) => void = (values, actions) => {
+    actions.setSubmitting(true);
     console.log(values);
+    actions.resetForm();
+    actions.setSubmitting(false);
   };
 
   const validationSchema = Yup.object({
     email: Yup.string().required('Required').email('Invalid Email Format'),
-    password: Yup.string()
-      .required('Required')
-      .matches(
-        /^(?=.*[A-Z].*[A-Z])(?=.*[!@#$&*])(?=.*[0-9].*[0-9])(?=.*[a-z].*[a-z].*[a-z]).{8}$/
-      )
+    password: Yup.string().required('Required')
   });
 
   return (
@@ -38,21 +37,29 @@ const Login: React.FC = () => {
     >
       {formik => (
         <Form>
-          {/* <FormField
+          <FormField
             label='Email'
             name='email'
+            formik={formik}
             placeholder='Enter Your Email'
             type='email'
           />
           <FormField
             label='Password'
             name='password'
+            formik={formik}
             placeholder='Enter Your Password'
             type='password'
           />
-          <Button type='submit' w='100%' variant='solid' colorScheme='teal'>
-            Login
-          </Button> */}
+          <Button
+            type='submit'
+            w='100%'
+            variant='solid'
+            colorScheme='teal'
+            disabled={formik.isSubmitting}
+          >
+            Log In
+          </Button>
         </Form>
       )}
     </Formik>
