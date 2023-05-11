@@ -3,5 +3,7 @@ import 'dotenv/config';
 
 export const env = cleanEnv(process.env, {
   PORT: port(),
-  MONGO_URI: str()
+  MONGO_URI: str(),
+  JWT_SECRET: str(),
+  CLOUDINARY_URL: str()
 });

@@ -6,15 +6,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 require("dotenv/config");
 const cors_1 = __importDefault(require("cors"));
+const mongoose_1 = __importDefault(require("mongoose"));
+const envalid_1 = require("./utils/envalid");
+const userRoutes_1 = __importDefault(require("./routes/userRoutes"));
+const morgan_1 = __importDefault(require("morgan"));
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
+app.use((0, morgan_1.default)('dev'));
 app.use((0, cors_1.default)({
     origin: 'http://localhost:3000'
 }));
-app.get('/', (req, res) => {
-    res.send('API is Running');
-});
-app.listen(process.env.PORT, () => {
+app.use('/api/user', userRoutes_1.default);
+mongoose_1.default
+    .connect(envalid_1.env.MONGO_URI)
+    .then(() => app.listen(process.env.PORT, () => {
     console.log(`listening on port ${process.env.PORT}`);
-});
+}))
+    .catch(err => console.log(err));
 //# sourceMappingURL=server.js.map

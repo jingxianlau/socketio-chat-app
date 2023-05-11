@@ -5,6 +5,8 @@ const envalid_1 = require("envalid");
 require("dotenv/config");
 exports.env = (0, envalid_1.cleanEnv)(process.env, {
     PORT: (0, envalid_1.port)(),
-    MONGO_URI: (0, envalid_1.str)()
+    MONGO_URI: (0, envalid_1.str)(),
+    JWT_SECRET: (0, envalid_1.str)(),
+    CLOUDINARY_URL: (0, envalid_1.str)()
 });
 //# sourceMappingURL=envalid.js.map

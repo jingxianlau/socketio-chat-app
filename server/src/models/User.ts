@@ -8,13 +8,14 @@ const userModel = new mongoose.Schema(
     },
     email: {
       type: String,
-      required: true
+      required: true,
+      unique: true
     },
     password: {
       type: String,
-      requried: true
+      required: true
     },
-    pic: {
+    pfp: {
       type: String,
       required: true,
       default:
