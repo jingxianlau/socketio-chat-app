@@ -4,7 +4,7 @@ import { Form, Formik, FormikHelpers } from 'formik';
 import { Button } from '@chakra-ui/react';
 import * as Yup from 'yup';
 
-interface FormValues {
+export interface FormValues {
   name: string;
   email: string;
   password: string;
@@ -24,18 +24,23 @@ const SignUp: React.FC = () => {
     values: FormValues,
     formikHelpers: FormikHelpers<FormValues>
   ) => void = (values, actions) => {
+    actions.setSubmitting(true);
     console.log(values);
+    actions.resetForm();
+    actions.setSubmitting(false);
   };
 
   const validationSchema = Yup.object({
-    name: Yup.string().required(),
+    name: Yup.string()
+      .required('Required')
+      .min(3, 'Name must be at least 3 characters'),
     email: Yup.string().required('Required').email('Invalid Email Format'),
     password: Yup.string()
       .required('Required')
-      .matches(
-        /^(?=.*[A-Z].*[A-Z])(?=.*[!@#$&*])(?=.*[0-9].*[0-9])(?=.*[a-z].*[a-z].*[a-z]).{8}$/
-      ),
-    confirmPassword: Yup.string().required('Required'),
+      .min(8, 'Password must be at least 8 characters long'),
+    confirmPassword: Yup.string()
+      .required('Required')
+      .oneOf([Yup.ref('password')], 'Passwords must match'),
     pfp: Yup.string()
   });
 
@@ -50,29 +55,44 @@ const SignUp: React.FC = () => {
           <FormField
             label='Name'
             name='name'
+            formik={formik}
             placeholder='Enter Your Name'
             type='text'
           />
           <FormField
             label='Email'
             name='email'
+            formik={formik}
             placeholder='Enter Your Email'
             type='email'
           />
           <FormField
             label='Password'
             name='password'
+            formik={formik}
             placeholder='Enter Your Password'
             type='password'
           />
           <FormField
             label='Confirm Password'
             name='confirmPassword'
+            formik={formik}
             placeholder='Enter Your Password Again'
             type='password'
           />
-          <FormField label='Profile Picture' name='pfp' type='file' />
-          <Button type='submit' w='100%' variant='solid' colorScheme='teal'>
+          <FormField
+            label='Profile Picture'
+            name='pfp'
+            formik={formik}
+            type='file'
+          />
+          <Button
+            type='submit'
+            w='100%'
+            variant='solid'
+            colorScheme='teal'
+            disabled={formik.isSubmitting}
+          >
             Sign Up
           </Button>
         </Form>

@@ -38,7 +38,7 @@ const Login: React.FC = () => {
     >
       {formik => (
         <Form>
-          <FormField
+          {/* <FormField
             label='Email'
             name='email'
             placeholder='Enter Your Email'
@@ -52,7 +52,7 @@ const Login: React.FC = () => {
           />
           <Button type='submit' w='100%' variant='solid' colorScheme='teal'>
             Login
-          </Button>
+          </Button> */}
         </Form>
       )}
     </Formik>

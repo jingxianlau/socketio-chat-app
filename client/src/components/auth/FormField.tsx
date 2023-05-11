@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Field, FieldProps } from 'formik';
+import { ErrorMessage, Field, FieldProps, FormikProps } from 'formik';
 import {
   Button,
   FormControl,
@@ -10,15 +10,18 @@ import {
   InputProps,
   InputRightElement
 } from '@chakra-ui/react';
+import { FormValues } from './SignUp';
 
 interface FormFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
   name: string;
+  formik: FormikProps<FormValues>;
 }
 
 const FormField: React.FC<FormFieldProps> = ({
   label,
   name,
+  formik: { errors, touched },
   ...inputProps
 }) => {
   const [show, setShow] = useState(false);
@@ -28,7 +31,10 @@ const FormField: React.FC<FormFieldProps> = ({
       return (
         <Field name={name}>
           {({ field, form }: FieldProps) => (
-            <FormControl mb='5'>
+            <FormControl
+              mb='5'
+              isInvalid={(errors as any)[name] && (touched as any)[name]}
+            >
               <FormLabel htmlFor={name}>{label}</FormLabel>
               <InputGroup>
                 <Input
@@ -48,7 +54,9 @@ const FormField: React.FC<FormFieldProps> = ({
                   </InputRightElement>
                 )}
               </InputGroup>
-              <FormErrorMessage>{form.errors[name] as string}</FormErrorMessage>
+              <FormErrorMessage>
+                <ErrorMessage name={name}>{msg => msg}</ErrorMessage>
+              </FormErrorMessage>
             </FormControl>
           )}
         </Field>
@@ -58,10 +66,15 @@ const FormField: React.FC<FormFieldProps> = ({
       return (
         <Field name={name}>
           {({ field, form }: FieldProps) => (
-            <FormControl mb='5'>
+            <FormControl
+              mb='3'
+              isInvalid={(errors as any)[name] && (touched as any)[name]}
+            >
               <FormLabel htmlFor={name}>{label}</FormLabel>
               <Input {...(inputProps as InputProps)} {...field} p={1.5} />
-              <FormErrorMessage>{form.errors[name] as string}</FormErrorMessage>
+              <FormErrorMessage>
+                <ErrorMessage name={name}>{msg => msg}</ErrorMessage>
+              </FormErrorMessage>
             </FormControl>
           )}
         </Field>
@@ -71,10 +84,15 @@ const FormField: React.FC<FormFieldProps> = ({
       return (
         <Field name={name}>
           {({ field, form }: FieldProps) => (
-            <FormControl mb='5'>
+            <FormControl
+              mb='5'
+              isInvalid={(errors as any)[name] && (touched as any)[name]}
+            >
               <FormLabel htmlFor={name}>{label}</FormLabel>
               <Input {...(inputProps as InputProps)} {...field} />
-              <FormErrorMessage>{form.errors[name] as string}</FormErrorMessage>
+              <FormErrorMessage>
+                <ErrorMessage name={name}>{msg => msg}</ErrorMessage>
+              </FormErrorMessage>
             </FormControl>
           )}
         </Field>
