@@ -31,7 +31,7 @@ const Home: React.FC = () => {
       <Box w='100%' p={4} borderRadius='lg' borderWidth='1px'>
         <Tabs variant='soft-rounded' colorScheme='teal'>
           <TabList display='flex' justifyContent='space-evenly'>
-            <Tab width='100%' mr='3'>
+            <Tab width='100%' mr='3' height={10}>
               Login
             </Tab>
             <Tab width='100%'>Sign Up</Tab>

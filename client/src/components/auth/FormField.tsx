@@ -48,9 +48,18 @@ const FormField: React.FC<FormFieldProps> = ({
                     <Button
                       h='1.75rem'
                       size='sm'
+                      mr='-2'
                       onClick={() => setShow(!show)}
                     >
-                      {show ? 'Hide' : 'Show'}
+                      {show ? (
+                        <span className='material-symbols-outlined'>
+                          visibility_off
+                        </span>
+                      ) : (
+                        <span className='material-symbols-outlined'>
+                          visibility
+                        </span>
+                      )}
                     </Button>
                   </InputRightElement>
                 )}
@@ -68,7 +77,7 @@ const FormField: React.FC<FormFieldProps> = ({
         <Field name={name}>
           {({ field, form }: FieldProps) => (
             <FormControl
-              mb='3'
+              mb='5'
               isInvalid={(errors as any)[name] && (touched as any)[name]}
             >
               <FormLabel htmlFor={name}>{label}</FormLabel>
