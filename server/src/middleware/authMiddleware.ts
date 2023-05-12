@@ -27,5 +27,7 @@ export const protect: RequestHandler = async (req, res, next) => {
     } catch (err) {
       res.status(401).json({ err: 'User not Authenticated' });
     }
+  } else {
+    res.status(401).json({ err: 'User not Authenticated' });
   }
 };

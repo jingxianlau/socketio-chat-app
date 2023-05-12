@@ -73,5 +73,5 @@ export const searchForUser: RequestHandler = async (req, res) => {
   const users = await User.find(keyword)
     .find({ _id: { $ne: req.user._id } })
     .select('-password');
-  return res.send(users);
+  return res.json(users);
 };

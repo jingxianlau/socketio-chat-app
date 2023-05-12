@@ -1,10 +1,11 @@
 import express from 'express';
-import 'dotenv/config';
-import cors from 'cors';
 import mongoose from 'mongoose';
+import morgan from 'morgan';
+import cors from 'cors';
 import { env } from './utils/envalid';
 import userRoutes from './routes/userRoutes';
-import morgan from 'morgan';
+import chatRoutes from './routes/chatRoutes';
+import { protect } from './middleware/authMiddleware';
 
 const app = express();
 
@@ -19,6 +20,10 @@ app.use(
 
 app.use('/api/user', userRoutes);
 
+// protected routes
+app.use('/api/chat', protect, chatRoutes);
+
+// connect mongodb
 mongoose
   .connect(env.MONGO_URI)
   .then(() =>
