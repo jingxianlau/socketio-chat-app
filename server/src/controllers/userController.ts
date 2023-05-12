@@ -55,3 +55,23 @@ export const login: RequestHandler = async (req, res) => {
     token: generateToken(user._id)
   });
 };
+
+export const searchForUser: RequestHandler = async (req, res) => {
+  const keyword = req.query.search
+    ? {
+        $or: [
+          { name: { $regex: req.query.search, $options: 'i' } },
+          { email: { $regex: req.query.search, $options: 'i' } }
+        ]
+      }
+    : {};
+
+  if (!req.user) {
+    return res.status(401).json({ err: 'User not Authenticated' });
+  }
+
+  const users = await User.find(keyword)
+    .find({ _id: { $ne: req.user._id } })
+    .select('-password');
+  return res.send(users);
+};
