@@ -46,7 +46,7 @@ export const login: RequestHandler = async (req, res) => {
     return res.status(400).json({ err: 'Incorrect Password' });
   }
 
-  res.json({
+  return res.json({
     _id: user._id,
     name: user.name,
     email: user.email,

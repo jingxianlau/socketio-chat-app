@@ -8,7 +8,8 @@ import {
   Input,
   InputGroup,
   InputProps,
-  InputRightElement
+  InputRightElement,
+  useToast
 } from '@chakra-ui/react';
 import { FormValues as SignupFormValues } from './SignUp';
 import { FormValues as LoginFormValues } from './Login';
@@ -26,6 +27,80 @@ const FormField: React.FC<FormFieldProps> = ({
   ...inputProps
 }) => {
   const [show, setShow] = useState(false);
+
+  const toast = useToast();
+  const postDetails = async (
+    file: File | null,
+    setValue: (
+      field: string,
+      value: any,
+      shouldValidate?: boolean | undefined
+    ) => void
+  ) => {
+    const error = () => {
+      setValue('pfp', '');
+      toast({
+        title: 'An Unknown Error Occured',
+        description: 'Profile Picture Could Not Be Used',
+        duration: 3000,
+        isClosable: true,
+        position: 'bottom'
+      });
+    };
+
+    if (!file) {
+      setValue('pfp', '');
+      toast({
+        title: 'Please select an Image!',
+        status: 'warning',
+        duration: 3000,
+        isClosable: true,
+        position: 'bottom'
+      });
+      return;
+    }
+
+    if (file.type === 'image/jpeg' || file.type === 'image/png') {
+      try {
+        console.log(file);
+        const data = new FormData();
+        data.append('file', file);
+        data.append('upload_preset', 'socketio-chat-app');
+
+        const response = await fetch(
+          'https://api.cloudinary.com/v1_1/dqfzx9kc8/image/upload',
+          {
+            method: 'POST',
+            body: data
+          }
+        );
+
+        await response
+          .json()
+          .then(data => {
+            if (!data) {
+              error();
+            }
+          })
+          .catch(err => {
+            error();
+            console.log(err);
+          });
+      } catch (err) {
+        error();
+        console.log(err);
+      }
+    } else {
+      setValue('pfp', '');
+      toast({
+        title: 'Please select an Image!',
+        status: 'warning',
+        duration: 3000,
+        isClosable: true,
+        position: 'bottom'
+      });
+    }
+  };
 
   switch (inputProps.type) {
     case 'password':
@@ -81,7 +156,19 @@ const FormField: React.FC<FormFieldProps> = ({
               isInvalid={(errors as any)[name] && (touched as any)[name]}
             >
               <FormLabel htmlFor={name}>{label}</FormLabel>
-              <Input {...(inputProps as InputProps)} {...field} p={1.5} />
+              <Input
+                {...(inputProps as InputProps)}
+                {...field}
+                p={1.5}
+                onChange={e => {
+                  if (!e.target.files) return;
+                  form.handleChange(e);
+                  postDetails(
+                    (e.target.files[0] as File) || null,
+                    form.setFieldValue
+                  );
+                }}
+              />
               <FormErrorMessage>
                 <ErrorMessage name={name}>{msg => msg}</ErrorMessage>
               </FormErrorMessage>

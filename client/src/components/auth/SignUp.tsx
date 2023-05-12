@@ -92,6 +92,7 @@ const SignUp: React.FC = () => {
             variant='solid'
             colorScheme='teal'
             disabled={formik.isSubmitting}
+            isLoading={formik.isSubmitting}
           >
             Sign Up
           </Button>
