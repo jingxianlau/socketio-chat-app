@@ -1,18 +1,35 @@
 import { RequestHandler } from 'express';
 import { Chat } from '../models/Chat';
 import { User } from '../models/User';
+import { assertHasUser } from '../middleware/authMiddleware';
 
-export const fetchChats: RequestHandler = async (req, res) => {};
+export const fetchChats: RequestHandler = async (req, res) => {
+  assertHasUser(req);
+
+  try {
+    // find user's chats
+    const chats = await Chat.find({
+      users: { $elemMatch: { $eq: req.user._id } }
+    });
+
+    return res.json(chats);
+  } catch (err) {
+    return res.status(400).json({ err });
+  }
+};
 
 export const accessChat: RequestHandler = async (req, res) => {
+  assertHasUser(req);
+
   const { id } = req.body;
 
   if (!id) {
     return res.status(400).json({ err: 'Missing Parameters' });
   }
 
-  if (!req.user) {
-    return res.status(401).json({ err: 'User not Authenticated' });
+  const user = await User.findById(id);
+  if (!user) {
+    return res.status(400).json({ err: 'Invalid User' });
   }
 
   // find one-to-one chat
@@ -38,8 +55,8 @@ export const accessChat: RequestHandler = async (req, res) => {
     // create chat
     const chatData = {
       chatName: 'sender',
-      isGroupChat: false,
-      users: [req.user._id, id]
+      users: [req.user._id, id],
+      groupAdmins: []
     };
 
     try {

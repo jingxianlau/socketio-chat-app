@@ -1,12 +1,10 @@
 import React, { useEffect } from 'react';
 
-interface ChatsProps {}
-
-const Chats: React.FC<ChatsProps> = ({}) => {
+const Chats: React.FC = () => {
   const fetchChats = async () => {
     const response = await fetch('http://localhost:4000/api/chat');
 
-    console.log(response.json());
+    console.log(await response.json());
   };
 
   useEffect(() => {

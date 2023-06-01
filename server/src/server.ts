@@ -6,6 +6,7 @@ import { env } from './utils/envalid';
 import userRoutes from './routes/userRoutes';
 import chatRoutes from './routes/chatRoutes';
 import { protect } from './middleware/authMiddleware';
+import { errorHandler, notFound } from './middleware/errorMiddleware';
 
 const app = express();
 
@@ -18,10 +19,15 @@ app.use(
   })
 );
 
+// auth
 app.use('/api/user', userRoutes);
 
 // protected routes
 app.use('/api/chat', protect, chatRoutes);
+
+// error handling
+app.use(notFound);
+app.use(errorHandler);
 
 // connect mongodb
 mongoose

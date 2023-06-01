@@ -14,7 +14,7 @@ router.post('/create', accessChat);
 
 router.get('/', fetchChats);
 
-router.patch('/group/rename/:id', renameChat);
+router.patch('/rename/:id', renameChat);
 
 router.post('/group/create', createGroup);
 

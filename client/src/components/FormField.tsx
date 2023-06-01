@@ -11,25 +11,28 @@ import {
   InputRightElement,
   useToast
 } from '@chakra-ui/react';
-import { FormValues as SignupFormValues } from './SignUp';
-import { FormValues as LoginFormValues } from './Login';
+import { FormValues as SignupFormValues } from './auth/SignUp';
+import { FormValues as LoginFormValues } from './auth/Login';
 
 interface FormFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
   name: string;
+  sendValue?: (value: string) => void;
   formik: FormikProps<SignupFormValues> | FormikProps<LoginFormValues>;
 }
 
+/* !! CAUTION: DON'T LOOK ITS TERRIBLE CODE !! */
 const FormField: React.FC<FormFieldProps> = ({
   label,
   name,
-  formik: { errors, touched },
+  formik: { errors, touched, setSubmitting },
+  sendValue,
   ...inputProps
 }) => {
   const [show, setShow] = useState(false);
 
   const toast = useToast();
-  const postDetails = async (
+  const postImage = async (
     file: File | null,
     setValue: (
       field: string,
@@ -37,6 +40,8 @@ const FormField: React.FC<FormFieldProps> = ({
       shouldValidate?: boolean | undefined
     ) => void
   ) => {
+    setSubmitting(true);
+
     const error = () => {
       setValue('pfp', '');
       toast({
@@ -46,6 +51,7 @@ const FormField: React.FC<FormFieldProps> = ({
         isClosable: true,
         position: 'bottom'
       });
+      setSubmitting(false);
     };
 
     if (!file) {
@@ -62,7 +68,6 @@ const FormField: React.FC<FormFieldProps> = ({
 
     if (file.type === 'image/jpeg' || file.type === 'image/png') {
       try {
-        console.log(file);
         const data = new FormData();
         data.append('file', file);
         data.append('upload_preset', 'socketio-chat-app');
@@ -75,12 +80,18 @@ const FormField: React.FC<FormFieldProps> = ({
           }
         );
 
-        await response
+        response
           .json()
           .then(data => {
-            if (!data) {
+            if (!data.secure_url.toString) {
               error();
+              return;
             }
+            if (!sendValue) {
+              return;
+            }
+            sendValue(data.secure_url.toString());
+            setSubmitting(false);
           })
           .catch(err => {
             error();
@@ -99,8 +110,13 @@ const FormField: React.FC<FormFieldProps> = ({
         isClosable: true,
         position: 'bottom'
       });
+      setSubmitting(false);
     }
   };
+
+  if (inputProps.type === 'file' && !sendValue) {
+    return null;
+  }
 
   switch (inputProps.type) {
     case 'password':
@@ -163,10 +179,7 @@ const FormField: React.FC<FormFieldProps> = ({
                 onChange={e => {
                   if (!e.target.files) return;
                   form.handleChange(e);
-                  postDetails(
-                    (e.target.files[0] as File) || null,
-                    form.setFieldValue
-                  );
+                  postImage(e.target.files[0] as File, form.setFieldValue);
                 }}
               />
               <FormErrorMessage>

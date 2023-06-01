@@ -1,5 +1,5 @@
 import React from 'react';
-import FormField from './FormField';
+import FormField from '../FormField';
 import { Form, Formik, FormikHelpers } from 'formik';
 import { Button } from '@chakra-ui/react';
 import * as Yup from 'yup';
@@ -19,7 +19,7 @@ const Login: React.FC = () => {
     formikHelpers: FormikHelpers<FormValues>
   ) => void = (values, actions) => {
     actions.setSubmitting(true);
-    console.log(values);
+
     actions.resetForm();
     actions.setSubmitting(false);
   };

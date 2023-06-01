@@ -2,6 +2,7 @@ import { RequestHandler } from 'express';
 import { User } from '../models/User';
 import generateToken from '../utils/auth/generateToken';
 import { compareSync, hashSync } from 'bcrypt';
+import { assertHasUser } from '../middleware/authMiddleware';
 
 export const signup: RequestHandler = async (req, res) => {
   const { name, email, password, pfp } = req.body;
@@ -17,14 +18,17 @@ export const signup: RequestHandler = async (req, res) => {
 
   const hash = hashSync(password, 10);
 
-  const user = await User.create({ name, email, password: hash, pfp });
+  const obj = pfp
+    ? { name, email, password: hash, pfp }
+    : { name, email, password: hash };
+
+  const user = await User.create(obj);
 
   if (user) {
     return res.status(201).json({
       _id: user._id,
       name: user.name,
       email: user.email,
-      password: user.password,
       pfp: user.pfp,
       token: generateToken(user._id)
     });
@@ -50,13 +54,14 @@ export const login: RequestHandler = async (req, res) => {
     _id: user._id,
     name: user.name,
     email: user.email,
-    password: user.password,
     pfp: user.pfp,
     token: generateToken(user._id)
   });
 };
 
 export const searchForUser: RequestHandler = async (req, res) => {
+  assertHasUser(req);
+
   const keyword = req.query.search
     ? {
         $or: [
@@ -65,10 +70,6 @@ export const searchForUser: RequestHandler = async (req, res) => {
         ]
       }
     : {};
-
-  if (!req.user) {
-    return res.status(401).json({ err: 'User not Authenticated' });
-  }
 
   const users = await User.find(keyword)
     .find({ _id: { $ne: req.user._id } })

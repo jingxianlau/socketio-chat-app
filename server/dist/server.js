@@ -11,6 +11,7 @@ const envalid_1 = require("./utils/envalid");
 const userRoutes_1 = __importDefault(require("./routes/userRoutes"));
 const chatRoutes_1 = __importDefault(require("./routes/chatRoutes"));
 const authMiddleware_1 = require("./middleware/authMiddleware");
+const errorMiddleware_1 = require("./middleware/errorMiddleware");
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use((0, morgan_1.default)('dev'));
@@ -19,6 +20,8 @@ app.use((0, cors_1.default)({
 }));
 app.use('/api/user', userRoutes_1.default);
 app.use('/api/chat', authMiddleware_1.protect, chatRoutes_1.default);
+app.use(errorMiddleware_1.notFound);
+app.use(errorMiddleware_1.errorHandler);
 mongoose_1.default
     .connect(envalid_1.env.MONGO_URI)
     .then(() => app.listen(process.env.PORT, () => {
