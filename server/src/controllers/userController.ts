@@ -42,7 +42,7 @@ export const login: RequestHandler = async (req, res) => {
 
   const user = await User.findOne({ email });
   if (!user) {
-    return res.status(400).json({ err: 'User does not exist' });
+    return res.status(400).json({ err: 'Invalid Email' });
   }
 
   const validPassword = compareSync(password, user.password);

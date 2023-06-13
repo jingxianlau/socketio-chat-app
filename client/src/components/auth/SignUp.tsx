@@ -72,7 +72,6 @@ const SignUp: React.FC = () => {
         description: String(err),
         status: 'error'
       });
-      console.log(err);
       return;
     }
 

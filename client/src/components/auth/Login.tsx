@@ -1,14 +1,18 @@
 import React from 'react';
 import FormField from '../misc/FormField';
 import { Form, Formik, FormikHelpers } from 'formik';
-import { Button } from '@chakra-ui/react';
+import { Button, useToast } from '@chakra-ui/react';
 import * as Yup from 'yup';
+import { useNavigate } from 'react-router-dom';
 
 export interface FormValues {
   email: string;
   password: string;
 }
 const Login: React.FC = () => {
+  const toast = useToast();
+  const navigate = useNavigate();
+
   const initialValues: FormValues = {
     email: '',
     password: ''
@@ -17,10 +21,50 @@ const Login: React.FC = () => {
   const onSubmit: (
     values: FormValues,
     formikHelpers: FormikHelpers<FormValues>
-  ) => void = (values, actions) => {
+  ) => void = async (values, actions) => {
     actions.setSubmitting(true);
 
-    actions.resetForm();
+    try {
+      const res = await fetch('http://localhost:4000/api/user/login', {
+        method: 'POST',
+        body: JSON.stringify({
+          email: values.email,
+          password: values.password
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      const json = await res.json();
+
+      if (json.err) {
+        // error
+        toast({ title: json.err, status: 'error' });
+      } else {
+        // success
+        localStorage.setItem('userInfo', JSON.stringify(json));
+
+        toast({
+          title: 'Login Successful!',
+          status: 'success',
+          isClosable: true,
+          duration: 1500
+        });
+
+        actions.resetForm();
+        navigate('/chats');
+      }
+    } catch (err) {
+      // error
+      toast({
+        title: 'An unknown error has occurred',
+        description: String(err),
+        status: 'error'
+      });
+      return;
+    }
+
     actions.setSubmitting(false);
   };
 
