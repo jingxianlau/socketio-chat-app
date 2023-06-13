@@ -1,5 +1,5 @@
 import React from 'react';
-import FormField from '../FormField';
+import FormField from '../misc/FormField';
 import { Form, Formik, FormikHelpers } from 'formik';
 import { Button } from '@chakra-ui/react';
 import * as Yup from 'yup';

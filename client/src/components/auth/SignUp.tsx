@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import FormField from '../FormField';
+import FormField from '../misc/FormField';
 import { Form, Formik, FormikHelpers } from 'formik';
 import { Button, useToast } from '@chakra-ui/react';
 import * as Yup from 'yup';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 
 export interface FormValues {
   name: string;
@@ -32,19 +32,15 @@ const SignUp: React.FC = () => {
   ) => void = async (values, actions) => {
     actions.setSubmitting(true);
 
-    console.log(values);
-
     try {
-      const body = {
-        name: values.name,
-        email: values.email,
-        password: values.password,
-        pfp
-      };
-
       const res = await fetch('http://localhost:4000/api/user/register', {
         method: 'POST',
-        body: JSON.stringify(body),
+        body: JSON.stringify({
+          name: values.name,
+          email: values.email,
+          password: values.password,
+          pfp
+        }),
         headers: {
           'Content-Type': 'application/json'
         }
@@ -53,32 +49,16 @@ const SignUp: React.FC = () => {
       const json = await res.json();
 
       if (res.status === 409) {
-        toast({
-          title: 'Email already taken',
-          status: 'error',
-          duration: 3000,
-          isClosable: true,
-          position: 'bottom'
-        });
+        // email conflict
+        toast({ title: 'Email already taken', status: 'error' });
       } else if (json.err) {
-        toast({
-          title: 'An unknown error has occurred',
-          description: String(json.err),
-          status: 'error',
-          duration: 3000,
-          isClosable: false,
-          position: 'bottom'
-        });
+        // error
+        toast({ title: 'Error', description: json.err, status: 'error' });
       } else {
+        // success
         localStorage.setItem('userInfo', JSON.stringify(json));
 
-        toast({
-          title: 'Registration Successful!',
-          status: 'success',
-          duration: 3000,
-          isClosable: false,
-          position: 'bottom'
-        });
+        toast({ title: 'Registration Successful!', status: 'success' });
 
         actions.resetForm();
         setTimeout(() => {
@@ -86,13 +66,11 @@ const SignUp: React.FC = () => {
         }, 500);
       }
     } catch (err) {
+      // error
       toast({
         title: 'An unknown error has occurred',
         description: String(err),
-        status: 'error',
-        duration: 3000,
-        isClosable: false,
-        position: 'bottom'
+        status: 'error'
       });
       console.log(err);
       return;
@@ -108,7 +86,20 @@ const SignUp: React.FC = () => {
     email: Yup.string().required('Required').email('Invalid Email Format'),
     password: Yup.string()
       .required('Required')
-      .min(8, 'Password must be at least 8 characters long'),
+      .min(8, 'Password must be at least 8 characters long')
+      .matches(
+        /(?=.*[a-z])/,
+        'Password must have at least one lowercase letter'
+      )
+      .matches(
+        /(?=.*[A-Z])/,
+        'Password must have at least one uppercase letter'
+      )
+      .matches(/(?=.*[0-9])/, 'Password must have at least one digit')
+      .matches(
+        /(?=.*[^A-Za-z0-9])/,
+        'Password must have at least on special character'
+      ),
     confirmPassword: Yup.string()
       .required('Required')
       .oneOf([Yup.ref('password')], 'Passwords must match'),

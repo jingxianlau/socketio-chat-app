@@ -6,6 +6,7 @@ import App from './App';
 import { ChakraProvider, ColorModeScript } from '@chakra-ui/react';
 import { BrowserRouter } from 'react-router-dom';
 import theme from './theme';
+import { ChatProvider } from './context/ChatProvider';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -13,9 +14,12 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <ColorModeScript initialColorMode={theme.config.initialColorMode} />
+
     <BrowserRouter>
       <ChakraProvider theme={theme}>
-        <App />
+        <ChatProvider>
+          <App />
+        </ChatProvider>
       </ChakraProvider>
     </BrowserRouter>
   </React.StrictMode>

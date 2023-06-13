@@ -11,8 +11,8 @@ import {
   InputRightElement,
   useToast
 } from '@chakra-ui/react';
-import { FormValues as SignupFormValues } from './auth/SignUp';
-import { FormValues as LoginFormValues } from './auth/Login';
+import { FormValues as SignupFormValues } from '../auth/SignUp';
+import { FormValues as LoginFormValues } from '../auth/Login';
 
 interface FormFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
