@@ -42,14 +42,23 @@ const SideDrawer: React.FC = () => {
           </Button>
         </Tooltip>
 
-        <Text
-          fontSize='2xl'
-          fontFamily='Work sans'
-          opacity='30%'
-          fontWeight='50'
+        <Box
+          display={{ base: 'none', sm: 'flex' }}
+          justifyContent='center'
+          alignItems='center'
+          width='100px'
+          pos='fixed'
+          left='calc(50% - 50px)'
         >
-          WeTalk
-        </Text>
+          <Text
+            fontSize='2xl'
+            fontFamily='Work sans'
+            opacity='30%'
+            fontWeight='50'
+          >
+            WeTalk
+          </Text>
+        </Box>
         <Box
           display='flex'
           flexDirection='row'
