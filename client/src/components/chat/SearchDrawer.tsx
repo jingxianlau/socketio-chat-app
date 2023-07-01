@@ -7,7 +7,8 @@ import {
   Input,
   Box,
   useToast,
-  Spinner
+  Spinner,
+  Stack
 } from '@chakra-ui/react';
 import React, { useState } from 'react';
 import { GetChatState } from '../../context/ChatProvider';
@@ -133,18 +134,20 @@ const SearchDrawer: React.FC<SearchDrawerProps> = ({ onClose, isOpen }) => {
             <ChatLoading />
           ) : searchResult.length > 0 ? (
             // Map Results
-            searchResult.map(user => (
-              <UserListItem
-                user={user}
-                key={user._id}
-                handleFunction={() => accessChat(user._id)}
-              />
-            ))
+            <Stack gap={2}>
+              {searchResult.map(user => (
+                <UserListItem
+                  user={user}
+                  key={user._id}
+                  handleFunction={() => accessChat(user._id)}
+                />
+              ))}
+            </Stack>
           ) : (
             // No User Found
             search !== '' && <UserListItem notFound />
           )}
-          {loadingChat && <Spinner ml='auto' display='flex' />}
+          {loadingChat && <Spinner display='flex' margin='auto' />}
         </DrawerBody>
       </DrawerContent>
     </Drawer>

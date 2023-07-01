@@ -2,15 +2,15 @@ import { Skeleton, Stack } from '@chakra-ui/react';
 
 const ChatLoading = () => {
   return (
-    <Stack>
-      <Skeleton height='60px' mb='1' borderRadius='lg' />
-      <Skeleton height='60px' mb='1' borderRadius='lg' />
-      <Skeleton height='60px' mb='1' borderRadius='lg' />
-      <Skeleton height='60px' mb='1' borderRadius='lg' />
-      <Skeleton height='60px' mb='1' borderRadius='lg' />
-      <Skeleton height='60px' mb='1' borderRadius='lg' />
-      <Skeleton height='60px' mb='1' borderRadius='lg' />
-      <Skeleton height='60px' mb='1' borderRadius='lg' />
+    <Stack gap={2}>
+      <Skeleton height='60px' borderRadius='lg' />
+      <Skeleton height='60px' borderRadius='lg' />
+      <Skeleton height='60px' borderRadius='lg' />
+      <Skeleton height='60px' borderRadius='lg' />
+      <Skeleton height='60px' borderRadius='lg' />
+      <Skeleton height='60px' borderRadius='lg' />
+      <Skeleton height='60px' borderRadius='lg' />
+      <Skeleton height='60px' borderRadius='lg' />
     </Stack>
   );
 };

@@ -41,8 +41,6 @@ const UserListItem: React.FC<UserListItemProps> = ({
       display='flex'
       alignItems='center'
       px='3'
-      py='2'
-      mb='2'
       height='60px'
       borderRadius='lg'
     >
