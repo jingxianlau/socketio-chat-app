@@ -12,6 +12,15 @@ export const fetchChats: RequestHandler = async (req, res) => {
       users: { $elemMatch: { $eq: req.user._id } }
     });
 
+    for (let i = 0; i < chats.length; i++) {
+      await chats[i].populate('users', '-password');
+      await chats[i].populate('latestMessage');
+      await User.populate(chats[i], {
+        path: 'latestMessage.sender',
+        select: '-password'
+      });
+    }
+
     return res.json(chats);
   } catch (err) {
     return res.status(400).json({ err });
