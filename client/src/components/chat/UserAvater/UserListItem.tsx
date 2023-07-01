@@ -1,26 +1,43 @@
 import React from 'react';
-import { User } from '../../../context/ChatProvider';
+import { User } from '../../../types';
 import { Avatar, Box, Text } from '@chakra-ui/react';
 
 interface UserListItemProps {
-  user: User;
-  handleFunction: () => void;
+  user?: User;
+  handleFunction?: () => void;
+  notFound?: boolean;
 }
 
 const UserListItem: React.FC<UserListItemProps> = ({
   user,
-  handleFunction
+  handleFunction,
+  notFound
 }) => {
-  return (
+  if (!notFound && (!handleFunction || !user)) {
+    return null;
+  }
+
+  return notFound ? (
+    <Box
+      bg='#343f54'
+      display='flex'
+      alignItems='center'
+      justifyContent='center'
+      height='60px'
+      borderRadius='lg'
+    >
+      <Text>
+        <b>User Not Found</b>
+      </Text>
+    </Box>
+  ) : (
     <Box
       onClick={handleFunction}
       cursor='pointer'
       bg='#343f54'
-      color='white'
       _hover={{
         background: '#3a465e'
       }}
-      w='100%'
       display='flex'
       alignItems='center'
       px='3'
@@ -33,12 +50,12 @@ const UserListItem: React.FC<UserListItemProps> = ({
         mr='2'
         size='md'
         cursor='pointer'
-        name={user.name}
-        src={user.pfp}
+        name={user?.name}
+        src={user?.pfp}
       />
       <Box>
-        <Text>{user.name}</Text>
-        <Text fontSize='xs'>{user.email}</Text>
+        <Text>{user?.name}</Text>
+        <Text fontSize='xs'>{user?.email}</Text>
       </Box>
     </Box>
   );

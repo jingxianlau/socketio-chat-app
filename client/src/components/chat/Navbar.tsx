@@ -8,12 +8,13 @@ import {
   MenuItem,
   MenuDivider,
   Box,
-  Text
+  Text,
+  useToast
 } from '@chakra-ui/react';
 import React, { useState } from 'react';
 import ProfileModal from './modals/ProfileModal';
 import { useNavigate } from 'react-router-dom';
-import { User } from '../../context/ChatProvider';
+import { User } from '../../types';
 
 interface MenubarProps {
   user: User;
@@ -22,11 +23,20 @@ interface MenubarProps {
 
 const Menubar: React.FC<MenubarProps> = ({ user, searchBarOnClick }) => {
   const navigate = useNavigate();
+  const toast = useToast();
 
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
 
   const logoutHandler = () => {
     localStorage.removeItem('userInfo');
+
+    toast({
+      title: 'Successfully Logged Out',
+      status: 'success',
+      isClosable: true,
+      duration: 1500
+    });
+
     navigate('/');
   };
 

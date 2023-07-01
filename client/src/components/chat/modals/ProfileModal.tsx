@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import { User } from '../../../context/ChatProvider';
+import { User } from '../../../types';
 import {
   Modal,
   ModalBody,

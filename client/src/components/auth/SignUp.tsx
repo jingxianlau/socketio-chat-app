@@ -51,7 +51,7 @@ const SignUp: React.FC = () => {
       if (res.status === 409) {
         // email conflict
         toast({ title: 'Email already taken', status: 'error' });
-      } else if (json.err) {
+      } else if (!res.ok) {
         // error
         toast({ title: 'Error', description: json.err, status: 'error' });
       } else {

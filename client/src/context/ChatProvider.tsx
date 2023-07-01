@@ -6,21 +6,16 @@ import {
   useState
 } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Chat, ChatContextObject, ChatState, User } from '../types';
 
-const ChatContext = createContext<User | {}>({});
-
-export interface User {
-  email: string;
-  name: string;
-  pfp: string;
-  token: string;
-  _id: string;
-}
+const ChatContext = createContext<ChatContextObject>({});
 
 export const ChatProvider: React.FC<{ children: ReactNode }> = ({
   children
 }) => {
-  const [user, setUser] = useState<object>({});
+  const [user, setUser] = useState<User | undefined>();
+  const [selectedChat, setSelectedChat] = useState<Chat | undefined>();
+  const [chats, setChats] = useState<Chat[]>([]);
 
   const navigate = useNavigate();
 
@@ -35,9 +30,27 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
     setUser(userObj);
   }, [navigate]);
 
-  return <ChatContext.Provider value={user}>{children}</ChatContext.Provider>;
+  return (
+    <ChatContext.Provider
+      value={{ user, selectedChat, setSelectedChat, chats, setChats }}
+    >
+      {children}
+    </ChatContext.Provider>
+  );
 };
 
-export const ChatState = () => {
-  return useContext(ChatContext);
+export const GetChatState = () => {
+  const chatState = useContext(ChatContext);
+  if (!chatState.user || !chatState.setSelectedChat || !chatState.setChats) {
+    return null;
+  } else {
+    const { user, selectedChat, setSelectedChat, setChats, chats } = chatState;
+    return {
+      user,
+      selectedChat,
+      setSelectedChat,
+      setChats,
+      chats
+    } as ChatState;
+  }
 };

@@ -1,12 +1,17 @@
 import { useDisclosure } from '@chakra-ui/react';
 import React from 'react';
-import { ChatState, User } from '../../context/ChatProvider';
+import { GetChatState } from '../../context/ChatProvider';
 import Navbar from './Navbar';
 import SearchDrawer from './SearchDrawer';
 
 const SideDrawer: React.FC = () => {
-  const user = ChatState() as User;
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const chatState = GetChatState();
+  if (!chatState) {
+    return null;
+  }
+  const { user } = chatState;
 
   return (
     <>
@@ -14,7 +19,7 @@ const SideDrawer: React.FC = () => {
       <Navbar user={user} searchBarOnClick={onOpen} />
 
       {/* Search User */}
-      <SearchDrawer user={user} onClose={onClose} isOpen={isOpen} />
+      <SearchDrawer onClose={onClose} isOpen={isOpen} />
     </>
   );
 };

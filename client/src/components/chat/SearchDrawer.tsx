@@ -5,31 +5,40 @@ import {
   DrawerHeader,
   DrawerBody,
   Input,
-  Box
+  Box,
+  useToast,
+  Spinner
 } from '@chakra-ui/react';
 import React, { useState } from 'react';
-import { User } from '../../context/ChatProvider';
+import { GetChatState } from '../../context/ChatProvider';
 import ChatLoading from './misc/ChatLoading';
 import UserListItem from './UserAvater/UserListItem';
+import { Chat, User } from '../../types';
 
 interface SearchDrawerProps {
-  user: User;
   onClose: () => void;
   isOpen: boolean;
 }
 
-const SearchDrawer: React.FC<SearchDrawerProps> = ({
-  user,
-  onClose,
-  isOpen
-}) => {
+const SearchDrawer: React.FC<SearchDrawerProps> = ({ onClose, isOpen }) => {
+  const toast = useToast();
+
   const [search, setSearch] = useState('');
   const [searchResult, setSearchResult] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
-  const [loadingChat, setLoadingChat] = useState();
+  const [loadingChat, setLoadingChat] = useState(false);
+
+  const chatState = GetChatState();
+  if (!chatState) {
+    return null;
+  }
+  const { user, setSelectedChat, setChats, chats } = chatState;
 
   const handleSearch = async (search: string) => {
-    if (!search) return;
+    if (!search) {
+      setSearchResult([]);
+      return;
+    }
 
     try {
       setLoading(true);
@@ -56,7 +65,47 @@ const SearchDrawer: React.FC<SearchDrawerProps> = ({
     }
   };
 
-  const accessChat = (userId: string) => {};
+  const accessChat = async (id: string) => {
+    try {
+      setLoadingChat(true);
+
+      const res = await fetch('http://localhost:4000/api/chat/access', {
+        method: 'POST',
+        body: JSON.stringify({ id }),
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${user.token}`
+        }
+      });
+
+      const json = await res.json();
+
+      if (!res.ok) {
+        toast({
+          title: 'An error has occured',
+          status: 'error',
+          description: json.err
+        });
+      }
+      const chat = json as Chat;
+
+      // select chat
+      setSelectedChat(chat);
+
+      // add chat to chats (if not in there)
+      if (!chats.find(c => c._id === chat._id)) setChats([chat, ...chats]);
+
+      // close
+      setLoadingChat(false);
+      onClose();
+    } catch (err) {
+      toast({
+        title: 'An unknown error has occured',
+        status: 'error',
+        description: err
+      });
+    }
+  };
 
   return (
     <Drawer placement='left' onClose={onClose} isOpen={isOpen}>
@@ -80,8 +129,10 @@ const SearchDrawer: React.FC<SearchDrawerProps> = ({
 
           {/* Search Results */}
           {loading ? (
+            // Loading Skeletons
             <ChatLoading />
-          ) : (
+          ) : searchResult.length > 0 ? (
+            // Map Results
             searchResult.map(user => (
               <UserListItem
                 user={user}
@@ -89,7 +140,11 @@ const SearchDrawer: React.FC<SearchDrawerProps> = ({
                 handleFunction={() => accessChat(user._id)}
               />
             ))
+          ) : (
+            // No User Found
+            search !== '' && <UserListItem notFound />
           )}
+          {loadingChat && <Spinner ml='auto' display='flex' />}
         </DrawerBody>
       </DrawerContent>
     </Drawer>

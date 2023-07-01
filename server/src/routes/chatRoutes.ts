@@ -2,7 +2,7 @@ import express from 'express';
 import {
   fetchChats,
   accessChat,
-  createGroup,
+  accessGroup,
   addToGroup,
   removeFromGroup,
   renameChat
@@ -10,13 +10,14 @@ import {
 
 const router = express.Router();
 
-router.post('/create', accessChat);
+// id
+router.post('/access', accessChat);
 
 router.get('/', fetchChats);
 
 router.patch('/rename/:id', renameChat);
 
-router.post('/group/create', createGroup);
+router.post('/group/access', accessGroup);
 
 router.post('/group/add/:id', addToGroup);
 

@@ -74,7 +74,7 @@ export const accessChat: RequestHandler = async (req, res) => {
   }
 };
 
-export const createGroup: RequestHandler = async (req, res) => {};
+export const accessGroup: RequestHandler = async (req, res) => {};
 
 export const addToGroup: RequestHandler = async (req, res) => {};
 

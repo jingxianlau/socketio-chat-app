@@ -38,7 +38,7 @@ const Login: React.FC = () => {
 
       const json = await res.json();
 
-      if (json.err) {
+      if (!res.ok) {
         // error
         toast({ title: json.err, status: 'error' });
       } else {
